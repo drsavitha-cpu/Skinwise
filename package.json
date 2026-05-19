@@ -1,0 +1,7 @@
+{
+  "name": "skinwise",
+  "version": "1.0.0",
+  "description": "Skinwise — AI acne severity analyzer using GAGS scoring",
+  "private": true,
+  "type": "module"
+}

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skinwise — Acne Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">Skinwise</div>
+      <div class="brand-divider"></div>
+      <div class="brand-sub">Acne Analyzer</div>
+    </div>
+    <div class="step-indicator hidden" id="step-indicator">
+      Step <span id="step-current">1</span> of <span id="step-total">6</span>
+      <div class="step-bar"><div class="step-bar-fill" id="step-bar-fill"></div></div>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- ═══════════════ VIEW 1: LANDING ═══════════════ -->
+  <section class="view active" id="view-landing">
+    <div class="landing-grid">
+      <div class="landing-visual">
+        <div class="landing-corner tl"></div>
+        <div class="landing-corner tr"></div>
+        <div class="landing-corner bl"></div>
+        <div class="landing-corner br"></div>
+        <svg class="landing-face" viewBox="0 0 400 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="200" cy="240" rx="135" ry="180" stroke="#6B6B6B" stroke-width="1.5" fill="#F5F5F5"/>
+          <path d="M 115 195 Q 135 175 165 185" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M 235 185 Q 265 175 285 195" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="145" cy="240" r="4" fill="#1A1A1A"/>
+          <circle cx="255" cy="240" r="4" fill="#1A1A1A"/>
+          <path d="M 185 275 Q 200 305 215 275" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M 165 350 Q 200 370 235 350" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Lesion markers -->
+          <circle cx="200" cy="120" r="4" fill="#C8102E" opacity="0.85"/>
+          <circle cx="170" cy="140" r="3" fill="#C8102E" opacity="0.7"/>
+          <circle cx="225" cy="135" r="3" fill="#C8102E" opacity="0.7"/>
+          <circle cx="125" cy="260" r="5" fill="#C8102E" opacity="0.85"/>
+          <circle cx="105" cy="290" r="3" fill="#C8102E" opacity="0.7"/>
+          <circle cx="275" cy="270" r="4" fill="#C8102E" opacity="0.85"/>
+          <circle cx="290" cy="295" r="3" fill="#C8102E" opacity="0.7"/>
+          <circle cx="195" cy="320" r="3" fill="#C8102E" opacity="0.7"/>
+          <circle cx="205" cy="395" r="4" fill="#C8102E" opacity="0.85"/>
+          <circle cx="185" cy="400" r="3" fill="#C8102E" opacity="0.7"/>
+        </svg>
+        <div class="scan-bar"></div>
+        <div class="readout">
+          <div><span class="dot"></span>SYSTEM READY</div>
+          <div><span class="readout-label">PROTOCOL:</span> GAGS · 0–44</div>
+          <div><span class="readout-label">CAPTURE:</span> 3 ANGLES</div>
+          <div><span class="readout-accent">▸ AWAITING USER</span></div>
+        </div>
+      </div>
+
+      <div class="landing-copy">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>AI Skin Analysis</div>
+        <h1>Hyper-personalized analysis for <em>acne-prone skin</em>.</h1>
+        <p class="lede">Next-generation scanning calibrated to the Global Acne Grading System. Capture three angles, receive a clinically grounded severity report in under three minutes.</p>
+        <button class="btn btn-primary btn-lg" id="start-btn">
+          Start Analysis
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <ul class="benefit-list">
+          <li><span class="bnum">1</span>Detailed personal skin report in under 3 minutes</li>
+          <li><span class="bnum">2</span>Next-generation AI scanning technology</li>
+          <li><span class="bnum">3</span>Understand your skin, region by region</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VIEW 2: ABOUT YOU ═══════════════ -->
+  <section class="view" id="view-about">
+    <h2 class="page-title">Let's get to know you</h2>
+    <div class="form-grid">
+      <div>
+        <label class="field-label">What would you like to be called?</label>
+        <input type="text" id="user-name" class="text-input" placeholder="Your name" maxlength="40">
+
+        <label class="field-label" style="margin-top:28px;">Gender</label>
+        <div class="pill-group" data-field="gender">
+          <button class="pill" data-value="male">Male</button>
+          <button class="pill" data-value="female">Female</button>
+          <button class="pill" data-value="other">Prefer not to say</button>
+        </div>
+
+        <label class="field-label" style="margin-top:28px;">Pregnant or breastfeeding?</label>
+        <div class="field-hint">Some ingredients should be avoided during pregnancy</div>
+        <div class="pill-group" data-field="pregnant">
+          <button class="pill" data-value="yes">Yes</button>
+          <button class="pill" data-value="no">No</button>
+          <button class="pill" data-value="na">N/A</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="field-label">Your age range</label>
+        <div class="pill-group pill-group-wrap" data-field="age">
+          <button class="pill" data-value="under18">Under 18</button>
+          <button class="pill" data-value="18-25">18–25</button>
+          <button class="pill" data-value="26-35">26–35</button>
+          <button class="pill" data-value="36-45">36–45</button>
+          <button class="pill" data-value="46+">46+</button>
+        </div>
+
+        <label class="field-label" style="margin-top:28px;">Is your skin sensitive?</label>
+        <div class="pill-group" data-field="sensitive">
+          <button class="pill" data-value="no">No</button>
+          <button class="pill" data-value="yes">Yes</button>
+          <button class="pill" data-value="little">A little</button>
+        </div>
+
+        <label class="field-label" style="margin-top:28px;">How would you describe your skin?</label>
+        <div class="pill-group pill-group-wrap" data-field="skin_type">
+          <button class="pill" data-value="dry">Dry</button>
+          <button class="pill" data-value="normal">Normal</button>
+          <button class="pill" data-value="combination">Combination</button>
+          <button class="pill" data-value="oily">Oily</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-ghost" id="back-to-landing">Back</button>
+      <button class="btn btn-primary" id="next-from-about" disabled>
+        Next
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VIEW 3: PREP TIPS + CONSENT ═══════════════ -->
+  <section class="view" id="view-prep">
+    <h2 class="page-title">For best results</h2>
+    <div class="prep-grid">
+      <ul class="tip-list">
+        <li>
+          <div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M5 7v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7M8 7V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/></svg></div>
+          <div>
+            <div class="tip-title">Cleanse first</div>
+            <div class="tip-sub">Remove makeup, sunscreen, and skincare</div>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="14" r="4"/><circle cx="18" cy="14" r="4"/><path d="M10 14h4"/></svg></div>
+          <div>
+            <div class="tip-title">Remove glasses</div>
+            <div class="tip-sub">Frames can obscure the forehead and cheeks</div>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+          <div>
+            <div class="tip-title">Natural lighting</div>
+            <div class="tip-sub">Face a window or use bright, even light</div>
+          </div>
+        </li>
+        <li>
+          <div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M4 19l3-7h10l3 7M9 9V5a3 3 0 0 1 6 0v4"/></svg></div>
+          <div>
+            <div class="tip-title">Pull hair back</div>
+            <div class="tip-sub">Clear the forehead, cheeks, and jawline</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="consent-panel">
+        <div class="consent-text">
+          I consent to the temporary processing of my photos for the purpose of acne severity analysis. Images are not stored after analysis. Read the <a href="#" id="privacy-link">privacy notice</a>. By using the scanner I confirm I am over 16.
+        </div>
+        <div class="consent-actions">
+          <label class="consent-label">I agree to give access</label>
+          <div class="pill-group" data-field="consent">
+            <button class="pill" data-value="no">No</button>
+            <button class="pill" data-value="yes">Yes</button>
+          </div>
+        </div>
+
+        <div class="capture-mode-actions">
+          <button class="btn btn-primary" id="start-scan-btn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+            Start scan
+          </button>
+          <button class="btn btn-outline" id="upload-instead-btn" disabled>
+            Upload selfies instead
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-ghost" id="back-to-about">Back</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VIEW 4: LIVE CAMERA SCAN ═══════════════ -->
+  <section class="view" id="view-scan">
+    <div class="scan-head">
+      <h2 class="page-title" id="scan-title">Frontal scan</h2>
+      <p class="scan-subtitle" id="scan-subtitle">Position your face within the oval · Look straight ahead</p>
+    </div>
+
+    <div class="pose-progress">
+      <div class="pose-step active" data-pose="front"><div class="pose-step-num">1</div>Front</div>
+      <div class="pose-step-line"></div>
+      <div class="pose-step" data-pose="left"><div class="pose-step-num">2</div>Left</div>
+      <div class="pose-step-line"></div>
+      <div class="pose-step" data-pose="right"><div class="pose-step-num">3</div>Right</div>
+    </div>
+
+    <div class="scan-stage" id="scan-stage">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="capture-canvas" style="display:none"></canvas>
+      <canvas id="detect-canvas" class="detect-canvas"></canvas>
+      <img id="captured-preview" class="captured-preview" alt="Captured">
+
+      <!-- Live checks -->
+      <div class="checks-bar" id="checks-bar">
+        <div class="check" id="check-pose">
+          <span class="check-icon"></span>
+          <span class="check-label" id="check-pose-label">Look straight</span>
+        </div>
+        <div class="check" id="check-position">
+          <span class="check-icon"></span>
+          <span class="check-label">Face position</span>
+        </div>
+        <div class="check" id="check-lighting">
+          <span class="check-icon"></span>
+          <span class="check-label">Lighting</span>
+        </div>
+      </div>
+
+      <!-- Face guide oval (SVG) -->
+      <svg class="face-guide-svg" id="face-guide-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        <ellipse id="guide-oval" cx="50" cy="50" rx="22" ry="32" fill="none" stroke="#C8102E" stroke-width="0.4"/>
+      </svg>
+
+      <!-- Analyzing overlay (mesh + dots) -->
+      <div class="analyze-overlay" id="analyze-overlay">
+        <div class="analyze-label">Analyzing data</div>
+        <div class="analyze-underline"></div>
+        <svg class="analyze-mesh" id="analyze-mesh" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"></svg>
+      </div>
+
+      <!-- Capture button -->
+      <div class="scan-controls">
+        <button class="snap-btn" id="snap-btn" disabled>
+          <span class="snap-inner"></span>
+        </button>
+      </div>
+
+      <!-- Preview controls -->
+      <div class="preview-controls" id="preview-controls">
+        <button class="btn btn-outline-light" id="retake-btn">Retake</button>
+        <button class="btn btn-primary" id="use-photo-btn">Use this photo</button>
+      </div>
+    </div>
+
+    <!-- Captured thumbnails -->
+    <div class="thumb-row" id="thumb-row">
+      <div class="thumb empty" data-pose="front"><span class="thumb-label">Front</span></div>
+      <div class="thumb empty" data-pose="left"><span class="thumb-label">Left</span></div>
+      <div class="thumb empty" data-pose="right"><span class="thumb-label">Right</span></div>
+    </div>
+
+    <input type="file" id="file-input" accept="image/*" style="display:none">
+
+    <div class="camera-fallback">
+      Camera not working? <a id="upload-fallback-link">Upload photos instead</a>
+    </div>
+
+    <div class="camera-error hidden" id="camera-error">
+      <div class="error-title">Camera access needed</div>
+      <p>Please allow camera permission in your browser, or upload photos manually.</p>
+      <button class="btn btn-dark" id="retry-camera-btn">Try again</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VIEW 5: SCAN COMPLETE ═══════════════ -->
+  <section class="view" id="view-complete">
+    <h2 class="page-title-center">Scan complete</h2>
+    <div class="complete-photo-row" id="complete-photo-row"></div>
+    <div class="complete-actions">
+      <button class="btn btn-primary btn-lg" id="see-results-btn">
+        See my results
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+      <a class="text-link" id="scan-again-link">I would like to scan again</a>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VIEW 6: ANALYZING ═══════════════ -->
+  <section class="view" id="view-analyzing">
+    <div class="analyzing-card">
+      <div class="analyzing-spinner"></div>
+      <div class="analyzing-title">Computing your skin report</div>
+      <div class="analyzing-sub" id="analyzing-sub">Detecting lesions across 5 regions</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VIEW 7: RESULTS ═══════════════ -->
+  <section class="view" id="view-results">
+    <h2 class="page-title">Your skin report<span class="title-name" id="result-name"></span></h2>
+
+    <div class="results-main">
+      <!-- LEFT: face image with region zoom -->
+      <div class="result-image-card">
+        <div class="result-image-header">Your acne activity</div>
+        <div class="result-image-wrap" id="result-image-wrap">
+          <img id="result-img" class="result-img" alt="Your skin">
+        </div>
+        <div class="focus-row">
+          <span class="focus-label">Focus on:</span>
+          <div class="focus-pills" id="focus-pills">
+            <button class="focus-pill active" data-region="full">Full face</button>
+            <button class="focus-pill" data-region="forehead">Forehead</button>
+            <button class="focus-pill" data-region="left_cheek">L cheek</button>
+            <button class="focus-pill" data-region="right_cheek">R cheek</button>
+            <button class="focus-pill" data-region="nose">Nose</button>
+            <button class="focus-pill" data-region="chin">Chin</button>
+          </div>
+        </div>
+        <div class="view-toggle" id="view-toggle">
+          <button class="view-toggle-btn active" data-view="front">Front</button>
+          <button class="view-toggle-btn" data-view="left">Left</button>
+          <button class="view-toggle-btn" data-view="right">Right</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: cards -->
+      <div class="result-cards">
+        <div class="rcard" id="card-score">
+          <div class="rcard-title">GAGS Severity Score</div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-labels">
+              <span>LOW</span><span>MED</span><span>HIGH</span>
+            </div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" id="score-bar-fill"></div>
+              <div class="score-bar-marker" id="score-bar-marker">
+                <div class="score-bar-marker-tri"></div>
+                <div class="score-bar-marker-val" id="score-bar-val">0</div>
+              </div>
+            </div>
+            <div class="score-bar-max">44</div>
+          </div>
+          <div class="score-tier-row">
+            <span class="tier-badge" id="tier-badge"><span class="tier-dot"></span><span id="tier-text">—</span></span>
+            <span class="region-active-label" id="region-active-label">Full face</span>
+          </div>
+        </div>
+
+        <div class="rcard" id="card-region-detail">
+          <div class="rcard-title">Region detail</div>
+          <div class="region-stats">
+            <div class="region-stat">
+              <div class="region-stat-label">Worst lesion</div>
+              <div class="region-stat-val" id="rd-worst">—</div>
+            </div>
+            <div class="region-stat">
+              <div class="region-stat-label">Total lesions</div>
+              <div class="region-stat-val" id="rd-total">—</div>
+            </div>
+          </div>
+          <div class="lesion-rows" id="rd-lesions"></div>
+        </div>
+
+        <div class="rcard" id="card-summary">
+          <div class="rcard-title">You and your skin</div>
+          <ul class="bullet-list" id="summary-bullets"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regional breakdown table -->
+    <div class="table-section">
+      <div class="section-label">All regions</div>
+      <div class="region-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Region</th>
+              <th class="center">Factor</th>
+              <th class="center">Worst lesion</th>
+              <th class="center">Grade</th>
+              <th class="right">Score</th>
+            </tr>
+          </thead>
+          <tbody id="region-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-ghost" id="new-scan-btn">New analysis</button>
+      <button class="btn btn-dark" id="export-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Export report
+      </button>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer</strong>
+      Skinwise is a wellness assessment tool and does not constitute medical diagnosis. Results are computed using the Global Acne Grading System (GAGS) face-region only (maximum 44; chest/back assessment omitted). Accuracy depends on image quality and lighting. For persistent, worsening, or scarring acne, consult a board-certified dermatologist.
+    </div>
+  </section>
+
+</main>
+
+<!-- MediaPipe Face Detection (loaded from CDN, free) -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
