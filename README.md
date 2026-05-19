@@ -1,4 +1,4 @@
-# Skinwise — Acne Severity Analyzer
+# AcneCheck — Acne Severity Analyzer
 
 A free, deploy-ready web app that uses live camera capture and AI to analyze acne severity using the Global Acne Grading System (GAGS).
 
@@ -37,24 +37,24 @@ Free tier limits: 1,500 requests per day on Gemini 1.5 Flash. More than enough.
 4. Easier alternative: install the **Vercel CLI**:
    ```bash
    npm install -g vercel
-   cd skinwise
+   cd acnecheck
    vercel
    ```
    Follow the prompts. Pick "no" when asked about linking to existing project.
 
 ### Recommended path (via GitHub):
 
-1. Create a new GitHub repo named `skinwise`
+1. Create a new GitHub repo named `acnecheck`
 2. Upload all files in this folder (or push via Git)
 3. Go to **https://vercel.com/new**
-4. Click **"Import"** next to your `skinwise` repo
+4. Click **"Import"** next to your `acnecheck` repo
 5. On the configuration screen, leave everything as default
 6. Before clicking "Deploy", expand **"Environment Variables"**:
    - Key: `GEMINI_API_KEY`
    - Value: paste your Gemini key from Step 1
 7. Click **"Deploy"**
 
-After ~60 seconds you'll get a live URL like `skinwise-xyz.vercel.app`.
+After ~60 seconds you'll get a live URL like `acnecheck-xyz.vercel.app`.
 
 ---
 
@@ -63,7 +63,7 @@ After ~60 seconds you'll get a live URL like `skinwise-xyz.vercel.app`.
 If you deployed via CLI without setting the env var:
 
 1. Go to **https://vercel.com/dashboard**
-2. Click your `skinwise` project
+2. Click your `acnecheck` project
 3. Settings → Environment Variables
 4. Add: `GEMINI_API_KEY` = your key from Step 1
 5. Save, then redeploy: Deployments tab → click the latest → "Redeploy"
@@ -102,9 +102,9 @@ The API key never touches the browser. Photos are processed transiently and not 
 ## File structure
 
 ```
-skinwise/
+acnecheck/
 ├── index.html        UI: 7 views (landing → about → prep → scan → complete → analyzing → results)
-├── style.css         Skinwise design system (red/white/grey)
+├── style.css         AcneCheck design system (red/white/grey)
 ├── app.js            All client logic: camera, face detection, capture, results, region zoom
 ├── api/
 │   └── analyze.js    Vercel serverless function — proxies Gemini API
@@ -148,7 +148,7 @@ The app needs HTTPS (or localhost) for the camera to work. Open `index.html` dir
 
 Easiest local test:
 ```bash
-cd skinwise
+cd acnecheck
 npx vercel dev
 ```
 This runs Vercel's dev server with the serverless function working locally. Add your Gemini key to a `.env.local` file:

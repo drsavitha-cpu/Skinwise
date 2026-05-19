@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skinwise — Acne Analyzer</title>
+<title>AcneCheck — Acne Analyzer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <div class="topbar-inner">
     <div class="brand">
       <div class="brand-mark"></div>
-      <div class="brand-text">Skinwise</div>
+      <div class="brand-text">AcneCheck</div>
       <div class="brand-divider"></div>
       <div class="brand-sub">Acne Analyzer</div>
     </div>
@@ -176,6 +176,13 @@
             <div class="tip-sub">Clear the forehead, cheeks, and jawline</div>
           </div>
         </li>
+        <li>
+          <div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+          <div>
+            <div class="tip-title">No filters or beauty mode</div>
+            <div class="tip-sub">Filters smooth skin and hide lesions, affecting accuracy</div>
+          </div>
+        </li>
       </ul>
 
       <div class="consent-panel">
@@ -305,11 +312,14 @@
 
   <!-- ═══════════════ VIEW 6: ANALYZING ═══════════════ -->
   <section class="view" id="view-analyzing">
-    <div class="analyzing-card">
-      <div class="analyzing-spinner"></div>
-      <div class="analyzing-title">Computing your skin report</div>
-      <div class="analyzing-sub" id="analyzing-sub">Detecting lesions across 5 regions</div>
+    <h2 class="page-title-center">Analyzing your skin</h2>
+    <div class="scanning-stage">
+      <img id="scanning-img" class="scanning-img" alt="Your photo being analyzed">
+      <div class="scanning-line"></div>
+      <div class="scanning-grid"></div>
     </div>
+    <div class="analyzing-title" style="text-align:center;margin-top:24px;">Computing your skin report</div>
+    <div class="analyzing-sub" id="analyzing-sub" style="text-align:center;">Detecting lesions across 5 regions</div>
   </section>
 
   <!-- ═══════════════ VIEW 7: RESULTS ═══════════════ -->
@@ -415,7 +425,7 @@
 
     <div class="disclaimer">
       <strong>Disclaimer</strong>
-      Skinwise is a wellness assessment tool and does not constitute medical diagnosis. Results are computed using the Global Acne Grading System (GAGS) face-region only (maximum 44; chest/back assessment omitted). Accuracy depends on image quality and lighting. For persistent, worsening, or scarring acne, consult a board-certified dermatologist.
+      AcneCheck is a wellness assessment tool and does not constitute medical diagnosis. Results are computed using the Global Acne Grading System (GAGS) face-region only (maximum 44; chest/back assessment omitted). Accuracy depends on image quality and lighting. For persistent, worsening, or scarring acne, consult a board-certified dermatologist.
     </div>
   </section>
 

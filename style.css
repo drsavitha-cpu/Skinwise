@@ -931,6 +931,51 @@ a:hover { text-decoration: underline; }
   font-family: var(--mono);
 }
 
+/* Scanning stage with up/down line animation */
+.scanning-stage {
+  position: relative;
+  max-width: 460px;
+  width: 100%;
+  aspect-ratio: 3/4;
+  margin: 0 auto;
+  background: var(--ink);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 2px solid var(--red);
+  box-shadow: 0 0 0 4px rgba(200,16,46,0.15);
+}
+.scanning-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.scanning-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  box-shadow: 0 0 16px var(--red), 0 0 32px var(--red);
+  animation: scan-updown 2.2s ease-in-out infinite;
+  z-index: 3;
+}
+@keyframes scan-updown {
+  0% { top: 5%; opacity: 0.4; }
+  50% { top: 95%; opacity: 1; }
+  100% { top: 5%; opacity: 0.4; }
+}
+.scanning-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* ═══════════════ RESULTS ═══════════════ */
 .results-main {
   display: grid;

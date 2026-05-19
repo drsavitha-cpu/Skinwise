@@ -261,7 +261,7 @@
         total += (data[i] + data[i+1] + data[i+2]) / 3;
       }
       const avg = total / (data.length / 4);
-      lighting = avg > 70 && avg < 220;
+      lighting = avg > 50 && avg < 240;
     } catch (e) { lighting = true; }
 
     // ─── Face position check (face roughly fills oval) ───
@@ -273,23 +273,24 @@
 
     let position;
     if (currentPose === 'front') {
+      // More forgiving thresholds for front pose
       position = (
-        xC > 0.35 && xC < 0.65 &&
-        yC > 0.35 && yC < 0.65 &&
-        w > 0.25 && w < 0.6
+        xC > 0.25 && xC < 0.75 &&
+        yC > 0.25 && yC < 0.75 &&
+        w > 0.18 && w < 0.75
       );
     } else if (currentPose === 'left') {
       // For left profile, face center can be slightly right
       position = (
-        xC > 0.45 && xC < 0.8 &&
-        yC > 0.3 && yC < 0.7 &&
-        w > 0.18 && w < 0.5
+        xC > 0.35 && xC < 0.85 &&
+        yC > 0.25 && yC < 0.75 &&
+        w > 0.12 && w < 0.6
       );
     } else { // right
       position = (
-        xC > 0.2 && xC < 0.55 &&
-        yC > 0.3 && yC < 0.7 &&
-        w > 0.18 && w < 0.5
+        xC > 0.15 && xC < 0.65 &&
+        yC > 0.25 && yC < 0.75 &&
+        w > 0.12 && w < 0.6
       );
     }
 
@@ -297,10 +298,11 @@
     const aspect = h / w;
     let pose;
     if (currentPose === 'front') {
-      pose = aspect > 1.05 && aspect < 1.6;
+      // More forgiving — most front faces have aspect 0.9 to 1.8
+      pose = aspect > 0.9 && aspect < 1.8;
     } else {
-      // Profile faces appear narrower → higher aspect ratio
-      pose = aspect > 1.15;
+      // Profile faces appear narrower → higher aspect ratio (also more forgiving)
+      pose = aspect > 1.0;
     }
 
     updateChecks({ pose, position, lighting });
@@ -355,22 +357,27 @@
     }
   }
 
-  // ─── Snap photo ──────────────────────────────────────────────────
+  // ─── Snap photo (compressed to avoid "files too large" error) ────
   snapBtn.addEventListener('click', () => {
     if (snapBtn.disabled) return;
     if (!video.videoWidth) return;
-    captureCanvas.width = video.videoWidth;
-    captureCanvas.height = video.videoHeight;
+    // Compress: scale down to max 800px on longest edge
+    const MAX_SIZE = 800;
+    let w = video.videoWidth, h = video.videoHeight;
+    if (w > h && w > MAX_SIZE) { h = h * (MAX_SIZE / w); w = MAX_SIZE; }
+    else if (h > MAX_SIZE) { w = w * (MAX_SIZE / h); h = MAX_SIZE; }
+    captureCanvas.width = w;
+    captureCanvas.height = h;
     const ctx = captureCanvas.getContext('2d');
     if (state.useFrontCamera) {
       ctx.save();
       ctx.scale(-1, 1);
-      ctx.drawImage(video, -captureCanvas.width, 0, captureCanvas.width, captureCanvas.height);
+      ctx.drawImage(video, -w, 0, w, h);
       ctx.restore();
     } else {
-      ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+      ctx.drawImage(video, 0, 0, w, h);
     }
-    const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.88);
+    const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.75);
     state.pendingPhoto = {
       dataUrl,
       base64: dataUrl.split(',')[1],
@@ -430,30 +437,43 @@
     }
   }
 
-  // ─── Upload fallback ─────────────────────────────────────────────
+  // ─── Upload fallback (with compression) ──────────────────────────
   $('file-input').addEventListener('change', (e) => {
     if (!e.target.files.length) return;
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const pose = POSES[state.poseIndex];
-      state.captures[pose] = {
-        dataUrl: ev.target.result,
-        base64: ev.target.result.split(',')[1],
-        mediaType: file.type
-      };
-      const thumb = document.querySelector(`.thumb[data-pose="${pose}"]`);
-      thumb.classList.remove('empty');
-      thumb.classList.add('filled');
-      thumb.innerHTML = `<img src="${state.captures[pose].dataUrl}"><span class="thumb-label">${pose}</span>`;
+      // Compress the uploaded image to max 800px on longest edge
+      const img = new Image();
+      img.onload = () => {
+        const MAX_SIZE = 800;
+        let w = img.width, h = img.height;
+        if (w > h && w > MAX_SIZE) { h = h * (MAX_SIZE / w); w = MAX_SIZE; }
+        else if (h > MAX_SIZE) { w = w * (MAX_SIZE / h); h = MAX_SIZE; }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        const compressedUrl = c.toDataURL('image/jpeg', 0.75);
+        const pose = POSES[state.poseIndex];
+        state.captures[pose] = {
+          dataUrl: compressedUrl,
+          base64: compressedUrl.split(',')[1],
+          mediaType: 'image/jpeg'
+        };
+        const thumb = document.querySelector(`.thumb[data-pose="${pose}"]`);
+        thumb.classList.remove('empty');
+        thumb.classList.add('filled');
+        thumb.innerHTML = `<img src="${state.captures[pose].dataUrl}"><span class="thumb-label">${pose}</span>`;
 
-      if (state.poseIndex < POSES.length - 1) {
-        state.poseIndex++;
-        updatePoseUI();
-      } else {
-        stopCamera();
-        goToCompleteView();
-      }
+        if (state.poseIndex < POSES.length - 1) {
+          state.poseIndex++;
+          updatePoseUI();
+        } else {
+          stopCamera();
+          goToCompleteView();
+        }
+      };
+      img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
     $('file-input').value = '';
@@ -495,6 +515,10 @@
   // ─── Run analysis ────────────────────────────────────────────────
   async function runAnalysis() {
     setView('view-analyzing');
+    // Show the captured front photo with scanning animation
+    if (state.captures.front) {
+      $('scanning-img').src = state.captures.front.dataUrl;
+    }
     const subEl = $('analyzing-sub');
     const messages = [
       'Detecting lesions across 5 regions',
