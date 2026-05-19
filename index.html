@@ -37,7 +37,9 @@
         <div class="landing-corner tr"></div>
         <div class="landing-corner bl"></div>
         <div class="landing-corner br"></div>
-        <svg class="landing-face" viewBox="0 0 400 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tries to load landing.jpg; if missing, shows the illustrated face below -->
+        <img class="landing-photo" id="landing-photo" src="landing.jpg" alt="" onerror="this.style.display='none'; document.getElementById('landing-illustration').style.display='block';">
+        <svg id="landing-illustration" class="landing-face" viewBox="0 0 400 480" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
           <ellipse cx="200" cy="240" rx="135" ry="180" stroke="#6B6B6B" stroke-width="1.5" fill="#F5F5F5"/>
           <path d="M 115 195 Q 135 175 165 185" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
           <path d="M 235 185 Q 265 175 285 195" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -45,7 +47,6 @@
           <circle cx="255" cy="240" r="4" fill="#1A1A1A"/>
           <path d="M 185 275 Q 200 305 215 275" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
           <path d="M 165 350 Q 200 370 235 350" stroke="#3F3F46" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <!-- Lesion markers -->
           <circle cx="200" cy="120" r="4" fill="#C8102E" opacity="0.85"/>
           <circle cx="170" cy="140" r="3" fill="#C8102E" opacity="0.7"/>
           <circle cx="225" cy="135" r="3" fill="#C8102E" opacity="0.7"/>
