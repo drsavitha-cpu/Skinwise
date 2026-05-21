@@ -67,7 +67,8 @@
     currentRegion: 'full',
     faceDetection: null,
     detectionRunning: false,
-    checks: { pose: false, position: false, lighting: false }
+    checks: { pose: false, position: false, lighting: false },
+    lastResultAt: 0
   };
 
   // ─── DOM refs ────────────────────────────────────────────────────
@@ -197,7 +198,18 @@
 
   // ─── MediaPipe Face Detection ─────────────────────────────────────
   function initFaceDetection() {
-    if (state.faceDetection || typeof FaceDetection === 'undefined') return;
+    if (state.faceDetection) return;
+    if (typeof FaceDetection === 'undefined') {
+      // MediaPipe script never loaded (CDN blocked, offline, etc).
+      // Fail closed and steer the user to the manual upload flow.
+      snapBtn.disabled = true;
+      setDetectorStatus(false);
+      showCameraError(
+        'Face-alignment helper could not load. Please upload your photos manually instead.',
+        false
+      );
+      return;
+    }
 
     try {
       state.faceDetection = new FaceDetection({
@@ -211,12 +223,40 @@
 
       // Detection loop
       state.detectionRunning = true;
+      setDetectorStatus(true);
       detectLoop();
     } catch (err) {
       console.warn('Face detection unavailable:', err);
-      // Fallback: enable snap button without checks
-      snapBtn.disabled = false;
+      // Fail closed — never unconditionally enable the snap button.
+      snapBtn.disabled = true;
+      setDetectorStatus(false);
+      showCameraError(
+        'Face detector failed to start. Please upload your photos manually instead.',
+        false
+      );
     }
+  }
+
+  // Visible status pip for the detector (helps debug remote issues).
+  function setDetectorStatus(active) {
+    let pip = document.getElementById('detector-status');
+    if (!pip) {
+      pip = document.createElement('div');
+      pip.id = 'detector-status';
+      pip.style.cssText =
+        'position:absolute;bottom:18px;left:18px;z-index:5;' +
+        'font-family:var(--mono,monospace);font-size:9px;letter-spacing:.08em;' +
+        'text-transform:uppercase;color:#fff;background:rgba(0,0,0,.55);' +
+        'backdrop-filter:blur(8px);padding:5px 9px;border-radius:999px;' +
+        'display:flex;align-items:center;gap:6px;';
+      const stage = document.getElementById('scan-stage');
+      if (stage) stage.appendChild(pip);
+    }
+    const dotColor = active ? '#16A34A' : '#C8102E';
+    pip.innerHTML =
+      '<span style="width:6px;height:6px;border-radius:50%;background:' +
+      dotColor + ';display:inline-block;"></span>' +
+      'Detector · ' + (active ? 'Active' : 'Offline');
   }
 
   async function detectLoop() {
@@ -226,10 +266,17 @@
         await state.faceDetection.send({ image: video });
       } catch (e) { /* swallow */ }
     }
+    // Freshness gate: if we haven't gotten a detection result in 1.5s,
+    // lock the button so a stale "pass" can't linger.
+    if (Date.now() - state.lastResultAt > 1500) {
+      snapBtn.disabled = true;
+      updateChecks({ pose: false, position: false, lighting: false });
+    }
     setTimeout(detectLoop, 200); // 5fps is plenty for live checks
   }
 
   function onFaceResults(results) {
+    state.lastResultAt = Date.now();
     const ctx = detectCanvas.getContext('2d');
     detectCanvas.width = detectCanvas.clientWidth;
     detectCanvas.height = detectCanvas.clientHeight;
@@ -271,38 +318,38 @@
     const w = bbox.width;
     const h = bbox.height;
 
+    // Tightened thresholds — these match the oval guide drawn over the video
+    // (front guide is ~44% wide × 64% tall, profile guides ~36% × 64%).
+    // The old bands were so permissive that almost any in-frame face passed.
     let position;
     if (currentPose === 'front') {
-      // More forgiving thresholds for front pose
       position = (
-        xC > 0.25 && xC < 0.75 &&
-        yC > 0.25 && yC < 0.75 &&
-        w > 0.18 && w < 0.75
+        xC > 0.42 && xC < 0.58 &&   // horizontally centred (±8%)
+        yC > 0.38 && yC < 0.58 &&   // vertically centred, slight upper bias
+        w  > 0.38 && w  < 0.62      // face fills oval — not tiny, not huge
       );
     } else if (currentPose === 'left') {
-      // For left profile, face center can be slightly right
+      // Subject's left cheek visible → face centre pushed right of frame.
       position = (
-        xC > 0.35 && xC < 0.85 &&
-        yC > 0.25 && yC < 0.75 &&
-        w > 0.12 && w < 0.6
+        xC > 0.48 && xC < 0.72 &&
+        yC > 0.32 && yC < 0.62 &&
+        w  > 0.22 && w  < 0.42      // profile is narrower than front
       );
     } else { // right
       position = (
-        xC > 0.15 && xC < 0.65 &&
-        yC > 0.25 && yC < 0.75 &&
-        w > 0.12 && w < 0.6
+        xC > 0.28 && xC < 0.52 &&
+        yC > 0.32 && yC < 0.62 &&
+        w  > 0.22 && w  < 0.42
       );
     }
 
-    // ─── Pose check (front needs square aspect; sides need narrower) ───
+    // ─── Pose check (front ≈ square; profile clearly taller-than-wide) ───
     const aspect = h / w;
     let pose;
     if (currentPose === 'front') {
-      // More forgiving — most front faces have aspect 0.9 to 1.8
-      pose = aspect > 0.9 && aspect < 1.8;
+      pose = aspect > 1.05 && aspect < 1.45;   // front face is roughly square
     } else {
-      // Profile faces appear narrower → higher aspect ratio (also more forgiving)
-      pose = aspect > 1.0;
+      pose = aspect > 1.35 && aspect < 2.2;    // profile must be elongated
     }
 
     updateChecks({ pose, position, lighting });
