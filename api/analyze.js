@@ -89,8 +89,10 @@ Critical rules:
     }
     parts.push({ text: prompt });
 
-    // Gemini 1.5 Flash — free tier, 1500 req/day
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Gemini 2.5 Flash — gemini-1.5-flash was retired and now returns 404.
+    // Using the stable 2.5 Flash model. To always get the newest Flash release,
+    // swap "gemini-2.5-flash" for "gemini-flash-latest".
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
